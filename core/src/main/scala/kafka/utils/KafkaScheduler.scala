@@ -40,7 +40,7 @@ class KafkaScheduler(val numThreads: Int, val baseThreadName: String, isDaemon: 
     executor.scheduleAtFixedRate(Utils.loggedRunnable(fun), delayMs, periodMs, TimeUnit.MILLISECONDS)
 
   def shutdown() = {
-    executor.shutdownNow
+    executor.shutdown
     logger.info("shutdown scheduler " + baseThreadName)
   }
 }
