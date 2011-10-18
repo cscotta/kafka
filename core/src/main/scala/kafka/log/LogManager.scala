@@ -50,6 +50,7 @@ private[kafka] class LogManager(val config: KafkaConfig,
   private val logFlusherScheduler = new KafkaScheduler(1, "kafka-logflusher-", false)
   private val logFlushIntervalMap = config.flushIntervalMap
   private val logRetentionMSMap = getLogRetentionMSMap(config.logRetentionHoursMap)
+  private val logRetentionMSContainsMap = getLogRetentionMSMap(config.logNameContainsRetentionHoursMap)
 
   /* Initialize a log for each subdirectory of the main log directory */
   private val logs = new Pool[String, Pool[Int, Log]]()
@@ -205,8 +206,19 @@ private[kafka] class LogManager(val config: KafkaConfig,
       logger.debug("Garbage collecting '" + log.name + "'")
       var logCleanupThresholdMS = this.logCleanupDefaultAgeMs
       val topic = Utils.getTopicPartition(log.dir.getName)._1
+
+      // Topic name match overrides
+      logRetentionMSContainsMap.foreach { case (key, value) =>
+        if (topic.contains(key))
+          logCleanupThresholdMS = value
+      }
+
+      // Topic-specific overrides
       if (logRetentionMSMap.contains(topic))
         logCleanupThresholdMS = logRetentionMSMap(topic)
+
+      logger.debug("Deletion age for " + topic + ": " + logCleanupThresholdMS)
+
       val toBeDeleted = log.markDeletedWhile(startMs - _.file.lastModified > logCleanupThresholdMS)
       for(segment <- toBeDeleted) {
         logger.info("Deleting log segment " + segment.file.getName() + " from " + log.name)

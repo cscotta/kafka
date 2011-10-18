@@ -7,3 +7,6 @@ project/boot/
 project/plugins/project/
 project/sbt_project_definition.iml
 .DS_Store
+*.iml
+*.ipr
+*.iws

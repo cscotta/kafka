@@ -538,6 +538,13 @@ object Utils {
     getCSVMap(retentionHours, exceptionMsg, successMsg)
   }
 
+  def getTopicContainsRetentionHours(retentionHours: String) : Map[String, Int] = {
+    logger.info("TOPIC CONTAINS RETENTION HOURS: " + retentionHours)
+    val exceptionMsg = "Malformed token for topic_contains.log.retention.hours in server.properties: "
+    val successMsg =  "The retention hour for "
+    getCSVMap(retentionHours, exceptionMsg, successMsg)
+  }
+
   def getTopicFlushIntervals(allIntervals: String) : Map[String, Int] = {
     val exceptionMsg = "Malformed token for topic.flush.Intervals.ms in server.properties: "
     val successMsg =  "The flush interval for "

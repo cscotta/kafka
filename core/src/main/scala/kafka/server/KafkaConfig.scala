@@ -66,6 +66,8 @@ class KafkaConfig(props: Properties) extends ZKConfig(props) {
   /* the number of hours to keep a log file before deleting it for some specific topic*/
   val logRetentionHoursMap = Utils.getTopicRentionHours(Utils.getString(props, "topic.log.retention.hours", ""))
 
+  val logNameContainsRetentionHoursMap = Utils.getTopicContainsRetentionHours(Utils.getString(props, "topic_contains.log.retention.hours", ""))
+
   /* the frequency in minutes that the log cleaner checks whether any log is eligible for deletion */
   val logCleanupIntervalMinutes = Utils.getIntInRange(props, "log.cleanup.interval.mins", 10, (1, Int.MaxValue))
   
