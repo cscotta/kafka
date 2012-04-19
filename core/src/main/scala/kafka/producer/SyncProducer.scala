@@ -90,6 +90,9 @@ class SyncProducer(val config: SyncProducerConfig) {
           // no way to tell if write succeeded. Disconnect and re-throw exception to let client handle retry
           disconnect()
           throw e
+        case e : java.nio.channels.NotYetConnectedException =>
+          disconnect()
+          throw e
         case e2 =>
           throw e2
       }
